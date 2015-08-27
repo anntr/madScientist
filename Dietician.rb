@@ -14,29 +14,25 @@ class Dietician < Scientist
     carbs = 0
     lipids= 0
     proteins = 0
-    creature.each do |meal|
+    creature.chromosome_set.each do |meal|
       carbs += meal.carbs
       lipids += meal.lipids
       proteins += meal.proteins
       fitness += rate_chromosome_fitness meal
     end
-    fitness + calc_fitness("carbs", carbs) + calc_fitness("lipids", lipids) + calc_fitness("proteins", proteins)
+    creature.fitness = fitness + calc_fitness("carbs", carbs) + calc_fitness("lipids", lipids) + calc_fitness("proteins", proteins)
   end
 
   def get_reference type, chromosome = nil
     if type == "calories"
       test = chromosome.send(type)
       case test
-        when 1
+        when 1,5
           @diet*0.2
-        when 2
+        when 2,4
           @diet*0.1
         when 3
           @diet*0.4
-        when 4
-          @diet*0.1
-        when 5
-          @diet*0.2
         else
           200
       end

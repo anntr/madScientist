@@ -35,16 +35,7 @@ class Meal
 #  Scientist.class_eval do
     def rate_fitness
       calories_fitness + nutrient_fitness
-
-
     end
-
-  def nutrient_fitness
-
-  end
-
-
- # end
 
 
 end
