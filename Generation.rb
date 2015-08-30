@@ -23,8 +23,8 @@ class Generation
     return Creature.new(children.first), Creature.new(children.last)
   end
 
-  def generate_new_population
-    size = @population.size/2
+  def generate_new_population population = @population
+    size = population.size/2
     new_population = []
     (1..size).each do
       children = crossover

@@ -10,4 +10,4 @@ scientist = Dietician.new
 
 lab = Laboratory.new scientist, data
 
-puts lab.produce_result
+res = lab.produce_result

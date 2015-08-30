@@ -1,7 +1,7 @@
 require  File.expand_path('../Scientist.rb', __FILE__)
 
 class Dietician < Scientist
-  def initialize total_cal = 1500
+  def initialize total_cal = 2000
     @diet = total_cal
   end
 
@@ -11,21 +11,17 @@ class Dietician < Scientist
 
   def rate_creature_fitness(creature)
     fitness = 0
-    carbs = 0
-    lipids= 0
-    proteins = 0
+    total_cal = 0
     creature.chromosome_set.each do |meal|
-      carbs += meal.carbs
-      lipids += meal.lipids
-      proteins += meal.proteins
+      total_cal += meal.calories
       fitness += rate_chromosome_fitness meal
     end
-    creature.fitness = fitness + calc_fitness("carbs", carbs) + calc_fitness("lipids", lipids) + calc_fitness("proteins", proteins)
+    creature.fitness = fitness + calc_fitness("diet", total_cal)
   end
 
   def get_reference type, chromosome = nil
     if type == "calories"
-      test = chromosome.send(type)
+      test = chromosome.send(:type)
       case test
         when 1,5
           @diet*0.2
@@ -36,6 +32,8 @@ class Dietician < Scientist
         else
           200
       end
+    elsif type == "diet"
+      1500
     else
       case type
         when "carbs"
@@ -48,19 +46,40 @@ class Dietician < Scientist
     end
   end
 
+=begin
   def calc_fitness type, total_value = nil, chromosome = nil
     p = rand.round(2)
     ref_value = get_reference(type, chromosome)
     total_value ||= chromosome.send(type)
     if ( (ref_value*(1-0.5*p))<=total_value and total_value<=(ref_value*(1+0.5*p)) )
-      return 2
+      if type == "calories"
+        return 2
+      end
+      return 1
     elsif ( ((ref_value*(1-p) <= total_value) and (total_value < ref_value*(1-0.5*p))) or ((ref_value*(1+p*0.5)) < total_value and (total_value <= ref_value*(1+p))) )
       return 0
     elsif ( (total_value < (ref_value*(1-p))) or (total_value > ref_value*(1+p)))
-      return -2
+      if type == "calories"
+        return -2
+      end
+      return -1
     end
   end
+=end
 
-
+  def calc_fitness type, total_value = nil, chromosome = nil
+    p = rand.round(2)
+    ref_value = get_reference(type, chromosome)
+    total_value ||= chromosome.send(type)
+    if total_value.between?(ref_value*(1-0.5*p), ref_value*(1+0.5*p))
+      return 4 if type == "calories"
+      return 3
+    elsif total_value.between?(ref_value*(1-p), ref_value*(1-0.5*p)) || total_value.between?(ref_value*(1+p*0.5), ref_value*(1+p))
+      return 2 if type == "calories"
+      return 1
+    elsif total_value < ref_value*ref_value*0.5 || total_value > ref_value
+      return -3
+    end
+  end
 
 end
